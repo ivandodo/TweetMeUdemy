@@ -15,17 +15,13 @@ from .mixins import FormUserNeededMixin, UserOwnerMixin
 class TweetCreateView(FormUserNeededMixin, CreateView):
     form_class = TweetModelForm
     template_name = 'tweets/create_view.html'
-    # success_url = reverse_lazy("tweet:detail")
-    #login_url="/admin/"
 
 class TweetUpdateView(LoginRequiredMixin, UserOwnerMixin, UpdateView):
     queryset = Tweet.objects.all()
     form_class = TweetModelForm
-    #success_url = "/tweets"
     template_name = 'tweets/update_view.html'
 
 class TweetDetailView(DetailView):
-    template_name = "tweets/detail_view.html"
     queryset = Tweet.objects.all()
 
     def get_object(self):
@@ -39,15 +35,14 @@ class TweetDeleteView(DeleteView):
     #model is the same as queryset
     model = Tweet
     template_name = "tweets/delete_confirm.html"
-    success_url = reverse_lazy("tweet:list")
+    success_url = reverse_lazy("tweets:list")
 
 class TweetListView(ListView):
-    template_name = "tweets/list_view.html"
-    #queryset = Tweet.objects.all()
+    template_name = "tweets/tweet_list.html"
+    queryset = Tweet.objects.all()
 
     def get_queryset(self, *args, **kwargs):
         qs = Tweet.objects.all()
-        print(self.request.GET)
         query = self.request.GET.get("q", None)
         if query is not None:
             qs = qs.filter(
@@ -81,7 +76,7 @@ class TweetListView(ListView):
 #         "object" : obj
 #     }
 #
-#     return render(request, "tweets/detail_view.html", context)
+#     return render(request, "tweets/tweet_detail.html", context)
 #
 # def tweet_list_view(request):
 #     queryset = Tweet.objects.all()
@@ -91,4 +86,4 @@ class TweetListView(ListView):
 #         "object_list" : queryset
 #     }
 #
-#     return render(request, "tweets/list_view.html", context)
+#     return render(request, "tweets/tweet_list.html", context)

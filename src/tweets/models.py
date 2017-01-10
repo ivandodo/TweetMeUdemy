@@ -17,7 +17,7 @@ class Tweet(models.Model):
 
     #alternative to success url
     def get_absolute_url(self):
-        return reverse("tweet:detail", kwargs={"pk":self.pk})
+        return reverse('tweet:detail', kwargs={"pk": self.pk})
 
     # def clean(self, *args, **kwargs):
     #     content = self.content
