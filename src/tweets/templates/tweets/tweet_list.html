@@ -7,29 +7,65 @@
         </div>
         <div class="col-sm-9">
             {% if not requesr.GET.q %}
-                <div class="col-sm-9">
-                    {% include "tweets/form.html" with form=create_form action_url=create_url button_title="Tweet" %}
-                </div>
-                <hr/>
-            {% endif %}
-            {% for object in object_list %}
-                <div class="col-sm-9">
-                    <h4>{{object.content}}</h4><br/>
-                    via {{object.user}} | {{object.timestamp|timesince}} ago | <a href='{{ object.get_absolute_url }}'>View</a>
-                </div>
                 <div class="col-sm-12">
+                    {% include "tweets/form.html" with form=create_form action_url=create_url button_title="Tweet" %}
                     <hr/>
                 </div>
-                {% empty %}
-                    {% if request.GET.q %}
-                        <p>No tweets found.</p>
-                    {% else %}
-                        <p>No tweets yet.</p>
-                    {% endif %}
-            {% endfor %}
+            {% endif %}
+
+            <div id="tweet-container">
+
+            </div>
+            <!--{% for object in object_list %}-->
+                <!--<div class="col-sm-9">-->
+                    <!--<h4>{{object.content}}</h4><br/>-->
+                    <!--via {{object.user}} | {{object.timestamp|timesince}} ago | <a href='{{ object.get_absolute_url }}'>View</a>-->
+                <!--</div>-->
+                <!--<div class="col-sm-12">-->
+                    <!--<hr/>-->
+                <!--</div>-->
+                <!--{% empty %}-->
+                    <!--{% if request.GET.q %}-->
+                        <!--<p>No tweets found.</p>-->
+                    <!--{% else %}-->
+                        <!--<p>No tweets yet.</p>-->
+                    <!--{% endif %}-->
+            <!--{% endfor %}-->
         </div>
         <div class="col-sm-8 col-sm-offset-2">
 
         </div>
     </div>
 {% endblock content %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        console.log("working");
+
+        $.ajax({
+            url:"{% url 'tweet-api:list' %}",
+            method: "GET",
+            success: function(data){
+                $.each(data, function(key, value){
+                    console.log(key);
+                    var tweetKey = key;
+                    var tweetContent = value.content;
+                    var tweetUser =  value.user;
+                    console.log($('#tweet-container'))
+                    $('#tweet-container').append(
+                        "<div class='col-sm-9'>"
+                            + "<b>" + tweetContent + "</b><br/> via "
+                            + tweetUser.username +  " | "
+                            + "<a href='#'>View</a></div><div class='col-sm-12'><hr/></div>"
+                    )
+                })
+            },
+            error: function(data){
+                console.log("error");
+                console.log(data);
+            }
+        })
+    })
+</script>
+{% endblock script %}

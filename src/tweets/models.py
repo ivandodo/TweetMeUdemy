@@ -19,6 +19,10 @@ class Tweet(models.Model):
     def get_absolute_url(self):
         return reverse('tweet:detail', kwargs={"pk": self.pk})
 
+    # class Meta:
+    #     app_label = 'tweets'
+
+
     # def clean(self, *args, **kwargs):
     #     content = self.content
     #     if (content=="abc"):
