@@ -16,6 +16,7 @@
             <div id="tweet-container">
 
             </div>
+
             <!--{% for object in object_list %}-->
                 <!--<div class="col-sm-9">-->
                     <!--<h4>{{object.content}}</h4><br/>-->
@@ -33,7 +34,7 @@
             <!--{% endfor %}-->
         </div>
         <div class="col-sm-8 col-sm-offset-2">
-
+            <a href="#" id="loadmore">Load more tweets</a>
         </div>
     </div>
 {% endblock content %}
@@ -55,6 +56,7 @@
     $(document).ready(function() {
         var query = getParameterByName('q');
         var tweetList = [];
+        var nextTweetUrl;
 
         function attachTweet(tweetValue, prepend){
             var tweetContent = tweetValue.content;
@@ -92,15 +94,27 @@
             }
         }
 
-        function fetchTweets(){
+        function fetchTweets(url){
+            var fetchUrl;
+            if(!url){
+                fetchUrl = "/api/tweet/";
+            } else {
+                fetchUrl = url;
+            }
             $.ajax({
-                url:"/api/tweet",
+                url:fetchUrl,
                 data: {
                     "q": query
                 },
                 method: "GET",
                 success: function(data){
-                    tweetList = data;
+                    tweetList = data.results;
+                    if (data.next){
+                        nextTweetUrl = data.next;
+                    } else {
+                        $("#loadmore").css("display", "none");
+                    }
+
                     parseTweets();
                 },
                 error: function(data){
@@ -111,6 +125,13 @@
         }
 
         fetchTweets();
+
+        $("#loadmore").bind("click", function(event){
+            event.preventDefault();
+            if (nextTweetUrl) {
+                fetchTweets(nextTweetUrl);
+            }
+        })
 
         var charsStart = 140;
         var charsCurrent = 0;
@@ -131,16 +152,27 @@
             } else if (charsCurrent < 0){
                 spanChars.addClass("red-color");
             }
-
-
          })
 
         $("#tweet-form").submit(function(event){
             event.preventDefault();
             this_ = $(this);
             var formData = this_.serialize();
-
-            if (charsCurrent >= 140) {
+            console.log(charsCurrent);
+            if (charsCurrent >= 0) {
+                $.ajax({
+                    url:"/api/tweet/create/",
+                    data: formData,
+                    method: "POST",
+                    success: function(data){
+                        this_.find("input[type=text], textarea").val("");
+                        attachTweet(data, true);
+                    },
+                    error: function(data){
+                        console.log("error");
+                        console.log(data);
+                    }
+                });
 
             } else {
                 console.log("Cannot send, tweet too long!");
