@@ -64,7 +64,7 @@
             var tweetSince = tweetValue.time_since;
             var tweetFormattedHtml =  "<div class='col-sm-9'>"
                         + "<b>" + tweetContent + "</b><br/> via "
-                        + tweetUser.username +  " | " + tweetSince + " | "
+                        + "<a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>" + " | " + tweetSince + " | "
                         + "<a href='#'>View</a></div><div class='col-sm-12'><hr/></div>"
             if (prepend){
                 $("#tweet-container").prepend(tweetFormattedHtml);
@@ -87,7 +87,8 @@
                         $("#tweet-container").append(
                             "<div class='col-sm-9'>"
                                 + "<b>" + tweetContent + "</b><br/> via "
-                                + tweetUser.username +  " | " + tweetSince + " | "
+                                + "<a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>"
+                                + " | " + tweetSince + " | "
                                 + "<a href='#'>View</a></div><div class='col-sm-12'><hr/></div>"
                         )
                     })
