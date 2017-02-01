@@ -21,7 +21,7 @@ class Tweet(models.Model):
 
     class Meta:
          ordering = ['-timestamp']
-    #     app_label = 'tweets'
+         app_label = 'tweets'
 
 
     # def clean(self, *args, **kwargs):

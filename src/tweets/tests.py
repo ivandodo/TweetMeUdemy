@@ -1,10 +1,9 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from src.tweets.models import Tweet
+from .models import Tweet
 
 User = get_user_model()
-
 
 class TweetModelTestCase(TestCase):
     def setUp(self):
@@ -17,3 +16,5 @@ class TweetModelTestCase(TestCase):
         )
 
         self.assertTrue(obj.content == 'Random content')
+
+

@@ -16,22 +16,6 @@
             <div id="tweet-container">
 
             </div>
-
-            <!--{% for object in object_list %}-->
-                <!--<div class="col-sm-9">-->
-                    <!--<h4>{{object.content}}</h4><br/>-->
-                    <!--via {{object.user}} | {{object.timestamp|timesince}} ago | <a href='{{ object.get_absolute_url }}'>View</a>-->
-                <!--</div>-->
-                <!--<div class="col-sm-12">-->
-                    <!--<hr/>-->
-                <!--</div>-->
-                <!--{% empty %}-->
-                    <!--{% if request.GET.q %}-->
-                        <!--<p>No tweets found.</p>-->
-                    <!--{% else %}-->
-                        <!--<p>No tweets yet.</p>-->
-                    <!--{% endif %}-->
-            <!--{% endfor %}-->
         </div>
         <div class="col-sm-8 col-sm-offset-2">
             <a href="#" id="loadmore">Load more tweets</a>
@@ -58,11 +42,19 @@
         var tweetList = [];
         var nextTweetUrl;
 
+        function updateHashLinks(){
+            $(".media-body").each(function(data){
+                var hashtagRegex = /(^|\s|>)#([\w\d-]+)/g
+                var newText = $(this).html().replace(hashtagRegex, "$1<a href='/tags/$2/'>#$2</a>")
+                $(this).html(newText)
+            })
+        }
+
         function attachTweet(tweetValue, prepend){
             var tweetContent = tweetValue.content;
             var tweetUser =  tweetValue.user;
             var tweetSince = tweetValue.time_since;
-            var tweetFormattedHtml =  "<div class='col-sm-9'>"
+            var tweetFormattedHtml =  "<div class='media-body'>"
                         + "<b>" + tweetContent + "</b><br/> via "
                         + "<a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>" + " | " + tweetSince + " | "
                         + "<a href='#'>View</a></div><div class='col-sm-12'><hr/></div>"
@@ -85,7 +77,7 @@
                         var tweetUser =  value.user;
                         var tweetSince = value.time_since;
                         $("#tweet-container").append(
-                            "<div class='col-sm-9'>"
+                            "<div class='media-body'>"
                                 + "<b>" + tweetContent + "</b><br/> via "
                                 + "<a href='" + tweetUser.url + "'>" + tweetUser.username + "</a>"
                                 + " | " + tweetSince + " | "
@@ -117,6 +109,7 @@
                     }
 
                     parseTweets();
+                    updateHashLinks();
                 },
                 error: function(data){
                     console.log("error");
@@ -159,7 +152,6 @@
             event.preventDefault();
             this_ = $(this);
             var formData = this_.serialize();
-            console.log(charsCurrent);
             if (charsCurrent >= 0) {
                 $.ajax({
                     url:"/api/tweet/create/",
@@ -168,6 +160,7 @@
                     success: function(data){
                         this_.find("input[type=text], textarea").val("");
                         attachTweet(data, true);
+                        updateHashLinks();
                     },
                     error: function(data){
                         console.log("error");

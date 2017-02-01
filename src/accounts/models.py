@@ -54,3 +54,6 @@ class UserProfile(models.Model):
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse_lazy("profiles:detail", kwargs={"username":self.user.username})
+
+    class Meta:
+         app_label = 'accounts'
